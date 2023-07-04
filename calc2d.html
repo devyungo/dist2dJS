@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            width: 90vh;
+            height: 90vh;
+            margin: 0;
+        }
+
+        .container {
+            display: inline-block;
+        }
+
+        #pointer {
+            position: absolute;
+            background-color: black;
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            outline-style: solid;
+            outline-width: 1px;
+            outline-color: black;
+        }
+
+        #pointer2 {
+            position: absolute;
+            background-color: white;
+            width: 11px;
+            height: 11px;
+            border-radius: 5px;
+            outline-style: solid;
+            outline-width: 1px;
+        }
+
+        #cartesiano {
+            position: relative;
+            background-color: grey;
+            width: 505px;
+            height: 505px;
+            margin: 30px;
+            margin: 30px;
+            background-image:
+                repeating-linear-gradient(#ccc 0 1px, transparent 1px 100%),
+                repeating-linear-gradient(90deg, #ccc 0 1px, transparent 1px 100%);
+            background-size: 504px 504px;
+            /*504 1 quad*/
+            outline-style: solid;
+            outline-color: black;
+            outline-width: 4px;
+            border-radius: 3px;
+        }
+
+        .textcontainer {
+            margin-left: 30px;
+            width: 505px;
+            vertical-align: top;
+        }
+
+        .input {
+            position: absolute;
+            text-align: right;
+            display: inline-block;
+            width: 505px;
+        }
+
+        .sizedist {
+            display: inline-block;
+            position: absolute;
+        }
+
+        #input {
+            -webkit-appearance: none;
+            background-color: gray;
+            border-radius: 10px;
+            outline-style: solid;
+            outline-width: 2px;
+            color: black;
+        }
+        .allcontainer{
+            font-size: 150%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="allcontainer">
+        <b>
+            <div class="container">
+                <div class="cartesiano" id="cartesiano">
+                    <div id="pointer" draggable="true"></div>
+                    <div id="pointer2" draggable="true"></div>
+                </div>
+            </div>
+            <div class="textcontainer">
+                <div class="sizedist">
+                    distance: <span id="distance">0</span>
+                </div>
+                <div class="input">
+                    Size: <span id="sizetext"> 10 </span>
+                    <input type="range" min="1" max="20" id="input">
+                </div>
+            </div>
+        </b>
+    </div>
+    <script>
+        const pointer = document.getElementById("pointer");
+        const pointer2 = document.getElementById("pointer2")
+        const cartesian = document.getElementById("cartesiano");
+        const sizeslider = document.getElementById("input");
+        const sizedisplay = document.getElementById("sizetext");
+        const distancedis = document.getElementById("distance");
+
+        function dist2d(x1, y1, x2, y2) {
+            return Math.sqrt(Math.abs(Math.pow(x2 - x1, 2)) + Math.abs(Math.pow(y2 - y1, 2))) // return a number based on the formula a² = b² + c², always return a positve number.
+        }
+
+        let containersize = 504 // pixels in grid
+        let quad = sizeslider.value //unit squares in grid
+        let quadsize = containersize / quad // size in pixels of 1 unit square
+
+
+
+        cartesian.style.backgroundSize = quadsize + 'px ' + quadsize + 'px'
+
+        function distgridbased(x1, y1, x2, y2, quadsize) {
+            return dist2d(x1, y1, x2, y2) / quadsize // return the distance based on the unit square size
+        }
+
+        let clicking1 = false;
+        let clicking2 = false;
+
+        let random1 = Math.floor(Math.random() * 525);
+        random1 = clamp(random1, 35, 525) - 35;
+        pointer.style.left = random1 + 'px';
+        let posX1 = random1;
+        random1 = Math.floor(Math.random() * 525);
+        random1 = clamp(random1, 35, 525) - 35;
+        pointer.style.top = random1 + 'px';
+        let posY1 = random1;
+
+        random1 = Math.floor(Math.random() * 525);
+        random1 = clamp(random1, 35, 525) - 35;
+        pointer2.style.left = random1 + 'px';
+        let posX2 = random1;
+        random1 = Math.floor(Math.random() * 525);
+        random1 = clamp(random1, 35, 525) - 35;
+        pointer2.style.top = random1 + 'px';
+        let posY2 = random1;
+
+        let distance = dist2d(posX1, posY1, posX2, posY2) / quadsize
+
+
+        sizeslider.addEventListener("input", function () {
+            quad = sizeslider.value;
+            sizedisplay.innerHTML = quad;
+            console.log(quad);
+            quadsize = containersize / quad;
+            cartesian.style.backgroundSize = quadsize + 'px ' + quadsize + 'px';
+            let distance = dist2d(posX1, posY1, posX2, posY2) / quadsize
+            distancedis.innerHTML = distance.toFixed(4)
+        })
+
+        pointer.addEventListener("mousedown", function () {
+            if (clicking1 == false) {
+                clicking1 = true;
+            }
+            else {
+                clicking1 = false;
+            }
+        })
+
+        pointer2.addEventListener("mousedown", function () {
+            if (clicking2 == false) {
+                clicking2 = true;
+
+            }
+            else {
+                clicking2 = false;
+            }
+        })
+
+        function clamp(num, min, max) {
+            if (num > max) {
+                return max;
+            } else if (num < min) {
+                return min;
+            } else {
+                return num;
+            }
+        }
+
+        console.log(quad)
+        cartesian.addEventListener("mousemove", function () {
+            if (clicking1 == true) {
+                posX1 = event.clientX - 35;
+                posY1 = event.clientY - 35;
+                posX1 = clamp(posX1, -6, 500);
+                posY1 = clamp(posY1, -6, 500);
+            }
+            if (clicking2 == true) {
+                posX2 = event.clientX - 35;
+                posY2 = event.clientY - 35;
+                posX2 = clamp(posX2, -6, 500);
+                posY2 = clamp(posY2, -6, 500);
+            }
+
+            if (clicking1 == true) {
+                pointer.style.left = posX1 + 'px';
+                pointer.style.top = posY1 + 'px';
+            }
+            if (clicking2 == true) {
+                pointer2.style.left = posX2 + 'px';
+                pointer2.style.top = posY2 + 'px';
+            }
+            let distance = dist2d(posX1, posY1, posX2, posY2) / quadsize
+            distancedis.innerHTML = distance.toFixed(4)
+        })
+
+
+    </script>
+</body>
+
+</html>
