@@ -172,7 +172,7 @@
         })
 
         pointer.addEventListener("mousedown", function () {
-            if (clicking1 == false) {
+            if (clicking1 == false && clicking2 == false) {
                 clicking1 = true;
             }
             else {
@@ -181,7 +181,7 @@
         })
 
         pointer2.addEventListener("mousedown", function () {
-            if (clicking2 == false) {
+            if (clicking2 == false && clicking1 == false) {
                 clicking2 = true;
 
             }
